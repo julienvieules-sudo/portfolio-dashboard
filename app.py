@@ -157,6 +157,20 @@ bilan['rendement_eur'] = (bilan['gain_eur'] / bilan['valeur_investie_eur']) * 10
 
 bilan_clean = bilan.dropna(subset=['prix_actuel']).copy()
 
+@st.cache_data(ttl=86400)
+def get_noms(tickers):
+    noms = {}
+    for ticker in tickers:
+        try:
+            info = yf.Ticker(ticker).info
+            noms[ticker] = info.get('longName', ticker)
+        except:
+            noms[ticker] = ticker
+    return noms
+
+noms = get_noms(bilan_clean['Ticker'].tolist())
+bilan_clean['Nom'] = bilan_clean['Ticker'].map(noms)
+
 # --- COLONNES SELON DEVISE ---
 if devise_affichage == "EUR":
     col_gain = 'gain_eur'
