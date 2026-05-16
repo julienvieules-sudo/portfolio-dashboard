@@ -1,0 +1,12 @@
+Action,Time,ISIN,Ticker,Name,Notes,ID,No. of shares,Price / share,Currency (Price / share),Exchange rate,Total,Currency (Total),Withholding tax,Currency (Withholding tax)
+Interest on cash,2026-05-03 01:04:00,,,,Interest on cash,019deb5d-1894-7598-944a-c65c396591d3,,,,,0.05,EUR,,
+Interest on cash,2026-05-04 01:03:53,,,,Interest on cash,019df083-5be7-77cc-8123-3f82687db8bf,,,,,0.06,EUR,,
+Interest on cash,2026-05-05 01:03:50,,,,Interest on cash,019df5a9-a8fd-73c2-90a9-c55884ff50d8,,,,,0.05,EUR,,
+Dividend (Dividend),2026-05-05 12:43:03,NL0010273215,ASML,ASML,,,6.8988482000,2.295000,EUR,1.00000000,15.83,EUR,2.79,EUR
+Interest on cash,2026-05-06 01:03:49,,,,Interest on cash,019dfad0-036d-7ecc-951a-5fa94e6991b5,,,,,0.06,EUR,,
+Interest on cash,2026-05-07 01:03:55,,,,Interest on cash,019dfff6-7793-7d1a-998b-e0eed3110dac,,,,,0.05,EUR,,
+Interest on cash,2026-05-08 01:03:54,,,,Interest on cash,019e051c-cfbb-7259-b1cf-718710baddc5,,,,,0.06,EUR,,
+Interest on cash,2026-05-08 01:03:54,,,,Interest on cash,019e051c-cfe4-75f8-9a04-b697c5f1769d,,,,,0.01,USD,,
+Dividend (Dividend),2026-05-08 14:14:11,US57636Q1040,MA,Mastercard,,,10.7645105200,0.739500,USD,0.85127400,6.78,EUR,1.40,USD
+Interest on cash,2026-05-09 01:03:48,,,,Interest on cash,019e0a43-121c-7c16-97ec-7f1b4695763d,,,,,0.06,EUR,,
+Interest on cash,2026-05-10 01:03:58,,,,Interest on cash,019e0f69-97e2-7a07-a4e0-0132bafcd0fe,,,,,0.05,EUR,,
