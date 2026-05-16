@@ -406,19 +406,38 @@ def calc_pv_realisees(df, eur_usd):
     return pd.DataFrame(pv_realisees)
 
 df_pv = calc_pv_realisees(df_transactions, eur_usd)
-df_pv = df_pv.sort_values('Date', ascending=False)
+
+# Regrouper par ticker
+df_pv_grouped = df_pv.groupby('Ticker').agg(
+    Nb_ventes=('Gain (€)', 'count'),
+    Gain_local=('Gain local', 'sum'),
+    Gain_eur=('Gain (€)', 'sum')
+).reset_index()
+
+# Ajouter les noms
+df_pv_grouped['Société'] = df_pv_grouped['Ticker'].map(noms)
+df_pv_grouped = df_pv_grouped[['Ticker', 'Société', 'Nb_ventes', 'Gain_local', 'Gain_eur']]
+df_pv_grouped.columns = ['Ticker', 'Société', 'Nb ventes', 'Gain local', 'Gain (€)']
+df_pv_grouped = df_pv_grouped.sort_values('Gain (€)', ascending=False)
+
+# Ligne total
+total_row = pd.DataFrame([{
+    'Ticker': 'TOTAL',
+    'Société': '',
+    'Nb ventes': df_pv_grouped['Nb ventes'].sum(),
+    'Gain local': df_pv_grouped['Gain local'].sum(),
+    'Gain (€)': df_pv_grouped['Gain (€)'].sum()
+}])
+df_pv_grouped = pd.concat([df_pv_grouped, total_row], ignore_index=True)
 
 total_pv = df_pv['Gain (€)'].sum()
-
 col1, col2 = st.columns(2)
 col1.metric("Total plus-values réalisées", f"€ {total_pv:,.0f}")
-col2.metric("Nombre de ventes", len(df_pv))
+col2.metric("Nombre de positions vendues", len(df_pv_grouped) - 1)
 
-st.dataframe(df_pv.style.format({
-    'Prix vente': '{:.2f}',
-    'Prix revient': '{:.2f}',
-    'Gain local': '{:+,.2f}',
-    'Gain (€)': '{:+,.2f}'
+st.dataframe(df_pv_grouped.style.format({
+    'Gain local': '{:+,.1f}',
+    'Gain (€)': '{:+,.1f}'
 }), use_container_width=True)
 
 # --- IMPACT CHANGE ---
