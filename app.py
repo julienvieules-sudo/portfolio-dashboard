@@ -458,15 +458,12 @@ dividendes_hist['Total'] = pd.to_numeric(dividendes_hist['Total'], errors='coerc
 div_par_trimestre = dividendes_hist.groupby('Trimestre')['Total'].sum().reset_index()
 div_par_trimestre = div_par_trimestre.sort_values('Trimestre')
 
-col1, col2 = st.columns(2)
-col1.metric("Total dividendes bruts", f"€ {dividendes_hist['Total'].sum():,.0f}")
 trim_record = div_par_trimestre.loc[div_par_trimestre['Total'].idxmax(), 'Trimestre']
 trim_label = f"Q{trim_record.quarter} {trim_record.year}"
+
+col1, col2 = st.columns(2)
+col1.metric("Total dividendes bruts", f"€ {dividendes_hist['Total'].sum():,.0f}")
 col2.metric("Trimestre record", trim_label, f"€ {div_par_trimestre['Total'].max():,.0f}")
-    div_par_trimestre.loc[div_par_trimestre['Total'].idxmax(), 'Trimestre'].strftime('Q%q %Y') 
-    if not div_par_trimestre.empty else '-',
-    f"€ {div_par_trimestre['Total'].max():,.0f}"
-)
 
 fig_div = px.bar(
     div_par_trimestre,
