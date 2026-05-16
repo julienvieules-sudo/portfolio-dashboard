@@ -264,7 +264,6 @@ st.set_page_config(page_title="Mon Portefeuille", layout="wide")
 st.title("📈 Mon Portefeuille")
 
 # --- TOGGLE DEVISE ---
-devise_affichage = st.radio("Vision", ["EUR", "USD"], horizontal=True)
 st.divider()
 
 # --- CHARGEMENT DONNEES ---
