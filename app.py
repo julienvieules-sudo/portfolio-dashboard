@@ -277,3 +277,32 @@ if devise_affichage == "EUR":
         f"€ {impact_change:,.0f}",
         f"{impact_change / valeur_usd * 100:.1f}% de tes positions USD"
     )
+
+# --- PERFORMANCE VS S&P 500 ---
+st.divider()
+st.subheader("Performance vs S&P 500")
+
+@st.cache_data(ttl=3600)
+def get_sp500_perf(date_debut):
+    sp500 = yf.download("^GSPC", start=date_debut,
+                         end=datetime.today().strftime('%Y-%m-%d'))['Close'].squeeze()
+    return (sp500.iloc[-1] / sp500.iloc[0] - 1) * 100
+
+sp500_perf = get_sp500_perf("2023-07-31")
+
+col1, col2, col3 = st.columns(3)
+col1.metric(
+    "Ton rendement global",
+    f"{rendement_global:.1f}%",
+)
+col2.metric(
+    "S&P 500 depuis juil. 2023",
+    f"{sp500_perf:.1f}%",
+)
+col3.metric(
+    "Écart",
+    f"{rendement_global - sp500_perf:.1f}%",
+    delta_color="normal"
+)
+
+st.caption("Note : comparaison indicative. Le S&P 500 est mesuré depuis ton premier achat, sans tenir compte de tes apports progressifs.")
