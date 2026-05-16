@@ -225,9 +225,24 @@ st.divider()
 col_a, col_b = st.columns(2)
 
 with col_a:
-    fig1 = px.pie(bilan_clean, values=col_valeur, names='Ticker',
-                  title=f'Répartition du portefeuille ({devise_affichage})')
-    st.plotly_chart(fig1, use_container_width=True)
+fig1 = px.pie(
+    bilan_clean,
+    values=col_valeur,
+    names='Ticker',
+    title=f'Répartition du portefeuille ({devise_affichage})',
+    hole=0.45,
+    color_discrete_sequence=px.colors.qualitative.Set3
+)
+fig1.update_traces(
+    textposition='outside',
+    textinfo='label+percent',
+    textfont_size=12,
+    pull=[0.03] * len(bilan_clean)
+)
+fig1.update_layout(
+    showlegend=False,
+    margin=dict(t=60, b=60, l=60, r=60)
+)
 
 with col_b:
     tab1, tab2 = st.tabs(["Rendement %", "Gain volume"])
