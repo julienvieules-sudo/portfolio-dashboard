@@ -171,7 +171,7 @@ st.dataframe(display.style.format({
     'Prix actuel': '{:.2f}',
     'Gain': '{:+.2f}',
     'Rendement %': '{:+.1f}%'
-}).background_gradient(subset=['Rendement %'], cmap='RdYlGn'), use_container_width=True)
+}), use_container_width=True)
 
 st.divider()
 
