@@ -230,14 +230,29 @@ with col_a:
     st.plotly_chart(fig1, use_container_width=True)
 
 with col_b:
-    fig2 = px.bar(bilan_clean.sort_values(col_rendement, ascending=False),
-                  x='Ticker', y=col_rendement,
-                  title=f'Rendement par position (%, {devise_affichage})',
-                  color=col_rendement,
-                  color_continuous_scale=['red', 'lightgrey', 'green'],
-                  color_continuous_midpoint=0)
-    st.plotly_chart(fig2, use_container_width=True)
-
+    tab1, tab2 = st.tabs(["Rendement %", "Gain volume"])
+    
+    with tab1:
+        fig2 = px.bar(
+            bilan_clean.sort_values(col_rendement, ascending=False),
+            x='Nom', y=col_rendement,
+            title=f'Rendement par position (%, {devise_affichage})',
+            color=col_rendement,
+            color_continuous_scale=['red', 'lightgrey', 'green'],
+            color_continuous_midpoint=0
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+    
+    with tab2:
+        fig2b = px.bar(
+            bilan_clean.sort_values(col_gain, ascending=False),
+            x='Nom', y=col_gain,
+            title=f'Gain par position ({symbole}, {devise_affichage})',
+            color=col_gain,
+            color_continuous_scale=['red', 'lightgrey', 'green'],
+            color_continuous_midpoint=0
+        )
+        st.plotly_chart(fig2b, use_container_width=True)
 # --- TABLEAU ---
 st.subheader(f"Détail des positions ({devise_affichage})")
 display = bilan_clean[['Ticker', 'quantite_actuelle', col_prix_revient,
