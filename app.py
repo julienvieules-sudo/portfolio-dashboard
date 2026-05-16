@@ -258,31 +258,21 @@ if devise_affichage == "EUR":
     st.subheader("Impact du change sur le portefeuille")
 
     usd_positions = bilan_clean[bilan_clean['devise'] == 'USD'].copy()
-    eur_positions = bilan_clean[bilan_clean['devise'] == 'EUR'].copy()
 
     valeur_usd = usd_positions['valeur_actuelle_eur'].sum()
-    valeur_eur = eur_positions['valeur_actuelle_eur'].sum()
-    valeur_totale = valeur_usd + valeur_eur
+    valeur_totale = bilan_clean['valeur_actuelle_eur'].sum()
 
     gain_usd_local = usd_positions['gain_local'].sum()
     gain_usd_eur = usd_positions['gain_eur'].sum()
     impact_change = gain_usd_eur - (gain_usd_local / eur_usd)
 
-    rendement_usd_local = (gain_usd_local / usd_positions['valeur_investie_local'].sum()) * 100
-    rendement_usd_eur = (gain_usd_eur / usd_positions['valeur_investie_eur'].sum()) * 100
-
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     col1.metric(
         "Exposition USD",
         f"{valeur_usd / valeur_totale * 100:.1f}%",
         f"€ {valeur_usd:,.0f}"
     )
     col2.metric(
-        "Rendement USD brut vs EUR réel",
-        f"{rendement_usd_local:.1f}% → {rendement_usd_eur:.1f}%",
-        f"{rendement_usd_eur - rendement_usd_local:.1f}% change"
-    )
-    col3.metric(
         "Perte de change latente",
         f"€ {impact_change:,.0f}",
         f"{impact_change / valeur_usd * 100:.1f}% de tes positions USD"
