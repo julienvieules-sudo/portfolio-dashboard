@@ -257,17 +257,38 @@ with col_b:
 st.subheader(f"Détail des positions ({devise_affichage})")
 display = bilan_clean[['Ticker', 'Nom', 'quantite_actuelle', col_prix_revient,
                         col_prix_actuel, col_gain, col_rendement]].copy()
-display.columns = ['Ticker', 'Société', 'Quantité', 'Prix achat', 'Prix actuel', f'Gain ({symbole})', 'Rendement %']
-display = display.sort_values(f'Gain ({symbole})', ascending=False)
-st.dataframe(display.style.format({
-    'Quantité': '{:.2f}',
-    'Prix achat': '{:.2f}',
-    'Prix actuel': '{:.2f}',
-    f'Gain ({symbole})': '{:+.2f}',
-    'Rendement %': '{:+.1f}%'
-}), use_container_width=True)
 
-st.divider()
+display['Valeur investie'] = display['quantite_actuelle'] * display[col_prix_revient]
+display['Valeur actuelle'] = display['quantite_actuelle'] * display[col_prix_actuel]
+
+display.columns = ['Ticker', 'Société', 'Quantité', 'Prix achat', 'Prix actuel',
+                   f'Gain ({symbole})', 'Rendement %', f'Investi ({symbole})', f'Valeur ({symbole})']
+display = display.sort_values(f'Gain ({symbole})', ascending=False)
+
+# Ligne total
+total_row = pd.DataFrame([{
+    'Ticker': 'TOTAL',
+    'Société': '',
+    'Quantité': '',
+    'Prix achat': '',
+    'Prix actuel': '',
+    f'Gain ({symbole})': display[f'Gain ({symbole})'].sum(),
+    'Rendement %': '',
+    f'Investi ({symbole})': display[f'Investi ({symbole})'].sum(),
+    f'Valeur ({symbole})': display[f'Valeur ({symbole})'].sum(),
+}])
+
+display = pd.concat([display, total_row], ignore_index=True)
+
+st.dataframe(display.style.format({
+    'Quantité': lambda x: f'{x:.2f}' if isinstance(x, float) else x,
+    'Prix achat': lambda x: f'{x:.2f}' if isinstance(x, float) else x,
+    'Prix actuel': lambda x: f'{x:.2f}' if isinstance(x, float) else x,
+    f'Gain ({symbole})': lambda x: f'{x:+.2f}' if isinstance(x, float) else x,
+    'Rendement %': lambda x: f'{x:+.1f}%' if isinstance(x, float) else x,
+    f'Investi ({symbole})': lambda x: f'{x:.0f}' if isinstance(x, float) else x,
+    f'Valeur ({symbole})': lambda x: f'{x:.0f}' if isinstance(x, float) else x,
+}), use_container_width=True)
 
 # --- BILAN REVENUS ---
 st.subheader("Bilan revenus & frais (€)")
