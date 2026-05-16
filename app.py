@@ -263,9 +263,6 @@ from datetime import datetime
 st.set_page_config(page_title="Mon Portefeuille", layout="wide")
 st.title("📈 Mon Portefeuille")
 
-# --- TOGGLE DEVISE ---
-st.divider()
-
 # --- CHARGEMENT DONNEES ---
 @st.cache_data(ttl=3600)
 def load_all():
