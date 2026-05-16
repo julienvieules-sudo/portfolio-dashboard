@@ -261,8 +261,11 @@ display = bilan_clean[['Ticker', 'Nom', 'quantite_actuelle', col_prix_revient,
 display['Valeur investie'] = display['quantite_actuelle'] * display[col_prix_revient]
 display['Valeur actuelle'] = display['quantite_actuelle'] * display[col_prix_actuel]
 
-display.columns = ['Ticker', 'Société', 'Quantité', 'Prix achat', 'Prix actuel',
-                   f'Gain ({symbole})', 'Rendement %', f'Investi ({symbole})', f'Valeur ({symbole})']
+display = display[['Ticker', 'Nom', 'quantite_actuelle', col_prix_revient, 'Valeur investie',
+                    col_prix_actuel, 'Valeur actuelle', col_gain, col_rendement]]
+
+display.columns = ['Ticker', 'Société', 'Quantité', 'Prix achat', f'Investi ({symbole})',
+                   'Prix actuel', f'Valeur ({symbole})', f'Gain ({symbole})', 'Rendement %']
 display = display.sort_values(f'Gain ({symbole})', ascending=False)
 
 # Ligne total
@@ -271,23 +274,23 @@ total_row = pd.DataFrame([{
     'Société': '',
     'Quantité': '',
     'Prix achat': '',
+    f'Investi ({symbole})': display[f'Investi ({symbole})'].sum(),
     'Prix actuel': '',
+    f'Valeur ({symbole})': display[f'Valeur ({symbole})'].sum(),
     f'Gain ({symbole})': display[f'Gain ({symbole})'].sum(),
     'Rendement %': '',
-    f'Investi ({symbole})': display[f'Investi ({symbole})'].sum(),
-    f'Valeur ({symbole})': display[f'Valeur ({symbole})'].sum(),
 }])
 
 display = pd.concat([display, total_row], ignore_index=True)
 
 st.dataframe(display.style.format({
-    'Quantité': lambda x: f'{x:.2f}' if isinstance(x, float) else x,
-    'Prix achat': lambda x: f'{x:.2f}' if isinstance(x, float) else x,
-    'Prix actuel': lambda x: f'{x:.2f}' if isinstance(x, float) else x,
-    f'Gain ({symbole})': lambda x: f'{x:+.2f}' if isinstance(x, float) else x,
+    'Quantité': lambda x: f'{x:.1f}' if isinstance(x, float) else x,
+    'Prix achat': lambda x: f'{x:.1f}' if isinstance(x, float) else x,
+    f'Investi ({symbole})': lambda x: f'{x:.1f}' if isinstance(x, float) else x,
+    'Prix actuel': lambda x: f'{x:.1f}' if isinstance(x, float) else x,
+    f'Valeur ({symbole})': lambda x: f'{x:.1f}' if isinstance(x, float) else x,
+    f'Gain ({symbole})': lambda x: f'{x:+.1f}' if isinstance(x, float) else x,
     'Rendement %': lambda x: f'{x:+.1f}%' if isinstance(x, float) else x,
-    f'Investi ({symbole})': lambda x: f'{x:.0f}' if isinstance(x, float) else x,
-    f'Valeur ({symbole})': lambda x: f'{x:.0f}' if isinstance(x, float) else x,
 }), use_container_width=True)
 
 # --- BILAN REVENUS ---
