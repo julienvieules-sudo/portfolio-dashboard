@@ -255,9 +255,9 @@ with col_b:
         st.plotly_chart(fig2b, use_container_width=True)
 # --- TABLEAU ---
 st.subheader(f"Détail des positions ({devise_affichage})")
-display = bilan_clean[['Ticker', 'quantite_actuelle', col_prix_revient,
+display = bilan_clean[['Ticker', 'Nom', 'quantite_actuelle', col_prix_revient,
                         col_prix_actuel, col_gain, col_rendement]].copy()
-display.columns = ['Ticker', 'Quantité', 'Prix achat', 'Prix actuel', f'Gain ({symbole})', 'Rendement %']
+display.columns = ['Ticker', 'Société', 'Quantité', 'Prix achat', 'Prix actuel', f'Gain ({symbole})', 'Rendement %']
 display = display.sort_values(f'Gain ({symbole})', ascending=False)
 st.dataframe(display.style.format({
     'Quantité': '{:.2f}',
