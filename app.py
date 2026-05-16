@@ -344,6 +344,83 @@ with col_y:
     st.metric("TTF", f"-€ {total_ttf:.2f}")
     st.metric("Frais de change", f"€ {total_frais_change:.2f}")
 
+# --- PLUS-VALUES RÉALISÉES ---
+st.divider()
+st.subheader("Plus-values réalisées")
+
+splits_manuels = {
+    'CMG': {'date': pd.Timestamp('2024-06-27'), 'ratio': 50}
+}
+
+def calc_pv_realisees(df, eur_usd):
+    achats_all = df[df['Action'].isin(['Market buy', 'Limit buy'])].copy()
+    ventes_all = df[df['Action'].isin(['Market sell', 'Limit sell'])].copy()
+
+    for d in [achats_all, ventes_all]:
+        d['No. of shares'] = pd.to_numeric(d['No. of shares'], errors='coerce')
+        d['Price / share'] = pd.to_numeric(d['Price / share'], errors='coerce')
+        d['Exchange rate'] = pd.to_numeric(d['Exchange rate'], errors='coerce')
+        d['Time'] = pd.to_datetime(d['Time'])
+
+    pv_realisees = []
+
+    for ticker in ventes_all['Ticker'].unique():
+        achats_ticker = achats_all[achats_all['Ticker'] == ticker].sort_values('Time').copy()
+        ventes_ticker = ventes_all[ventes_all['Ticker'] == ticker].sort_values('Time')
+
+        if ticker in splits_manuels:
+            split = splits_manuels[ticker]
+            mask_pre = achats_ticker['Time'] < split['date']
+            achats_ticker.loc[mask_pre, 'No. of shares'] *= split['ratio']
+            achats_ticker.loc[mask_pre, 'Price / share'] /= split['ratio']
+
+        total_investi = (achats_ticker['No. of shares'] * achats_ticker['Price / share']).sum()
+        total_achete = achats_ticker['No. of shares'].sum()
+
+        if total_achete == 0:
+            continue
+
+        prix_revient_moyen = total_investi / total_achete
+
+        for _, vente in ventes_ticker.iterrows():
+            prix_vente = vente['Price / share']
+            quantite = vente['No. of shares']
+
+            if ticker in splits_manuels and vente['Time'] < splits_manuels[ticker]['date']:
+                prix_vente /= splits_manuels[ticker]['ratio']
+                quantite *= splits_manuels[ticker]['ratio']
+
+            gain_local = (prix_vente - prix_revient_moyen) * quantite
+            taux = vente['Exchange rate'] if vente['Exchange rate'] != 1.0 else eur_usd
+            gain_eur = gain_local / taux
+
+            pv_realisees.append({
+                'Ticker': ticker,
+                'Date': vente['Time'].strftime('%Y-%m-%d'),
+                'Prix vente': round(prix_vente, 2),
+                'Prix revient': round(prix_revient_moyen, 2),
+                'Gain local': round(gain_local, 2),
+                'Gain (€)': round(gain_eur, 2)
+            })
+
+    return pd.DataFrame(pv_realisees)
+
+df_pv = calc_pv_realisees(df_transactions, eur_usd)
+df_pv = df_pv.sort_values('Date', ascending=False)
+
+total_pv = df_pv['Gain (€)'].sum()
+
+col1, col2 = st.columns(2)
+col1.metric("Total plus-values réalisées", f"€ {total_pv:,.0f}")
+col2.metric("Nombre de ventes", len(df_pv))
+
+st.dataframe(df_pv.style.format({
+    'Prix vente': '{:.2f}',
+    'Prix revient': '{:.2f}',
+    'Gain local': '{:+,.2f}',
+    'Gain (€)': '{:+,.2f}'
+}), use_container_width=True)
+
 # --- IMPACT CHANGE ---
 if devise_affichage == "EUR":
     st.divider()
