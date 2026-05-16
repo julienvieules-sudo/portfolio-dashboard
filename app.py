@@ -440,6 +440,51 @@ st.dataframe(df_pv_grouped.style.format({
     'Gain (€)': '{:+,.1f}'
 }), use_container_width=True)
 
+# --- HISTORIQUE DIVIDENDES ---
+st.divider()
+st.subheader("Historique des dividendes")
+
+dividendes_hist = df_transactions[df_transactions['Action'].isin([
+    'Dividend (Dividends paid by us corporations)',
+    'Dividend (Dividend)',
+    'Dividend (Dividend manufactured payment)',
+    'Dividend adjustment'
+])].copy()
+
+dividendes_hist['Time'] = pd.to_datetime(dividendes_hist['Time'])
+dividendes_hist['Trimestre'] = dividendes_hist['Time'].dt.to_period('Q').dt.to_timestamp()
+dividendes_hist['Total'] = pd.to_numeric(dividendes_hist['Total'], errors='coerce')
+
+div_par_trimestre = dividendes_hist.groupby('Trimestre')['Total'].sum().reset_index()
+div_par_trimestre = div_par_trimestre.sort_values('Trimestre')
+
+col1, col2 = st.columns(2)
+col1.metric("Total dividendes bruts", f"€ {dividendes_hist['Total'].sum():,.0f}")
+col2.metric("Trimestre record", 
+    div_par_trimestre.loc[div_par_trimestre['Total'].idxmax(), 'Trimestre'].strftime('Q%q %Y') 
+    if not div_par_trimestre.empty else '-',
+    f"€ {div_par_trimestre['Total'].max():,.0f}"
+)
+
+fig_div = px.bar(
+    div_par_trimestre,
+    x='Trimestre',
+    y='Total',
+    title='Évolution des dividendes par trimestre',
+    labels={'Total': '€ perçus', 'Trimestre': ''},
+    text='Total',
+    color_discrete_sequence=['#1D9E75']
+)
+fig_div.update_traces(
+    texttemplate='%{text:.0f} €',
+    textposition='outside'
+)
+fig_div.update_layout(
+    xaxis_tickformat='Q%q %Y',
+    margin=dict(t=60, b=40)
+)
+st.plotly_chart(fig_div, use_container_width=True)
+
 # --- IMPACT CHANGE ---
 if devise_affichage == "EUR":
     st.divider()
