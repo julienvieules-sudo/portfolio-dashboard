@@ -251,24 +251,47 @@ with col_b:
     with tab1:
         fig2 = px.bar(
             bilan_clean.sort_values(col_rendement, ascending=False),
-            x='Nom', y=col_rendement,
-            title=f'Rendement par position (%, {devise_affichage})',
+            x='Ticker', y=col_rendement,
             color=col_rendement,
             color_continuous_scale=['red', 'lightgrey', 'green'],
-            color_continuous_midpoint=0
+            color_continuous_midpoint=0,
+            text=col_rendement
+        )
+        fig2.update_traces(
+            texttemplate='%{text:.1f}%',
+            textposition='outside'
+        )
+        fig2.update_layout(
+            title=f'Rendement par position (%, {devise_affichage})',
+            xaxis_title='',
+            yaxis_title='',
+            coloraxis_showscale=False,
+            margin=dict(t=60, b=20)
         )
         st.plotly_chart(fig2, use_container_width=True)
     
     with tab2:
         fig2b = px.bar(
             bilan_clean.sort_values(col_gain, ascending=False),
-            x='Nom', y=col_gain,
-            title=f'Gain par position ({symbole}, {devise_affichage})',
+            x='Ticker', y=col_gain,
             color=col_gain,
             color_continuous_scale=['red', 'lightgrey', 'green'],
-            color_continuous_midpoint=0
+            color_continuous_midpoint=0,
+            text=col_gain
+        )
+        fig2b.update_traces(
+            texttemplate='%{text:+,.0f}',
+            textposition='outside'
+        )
+        fig2b.update_layout(
+            title=f'Gain par position ({symbole}, {devise_affichage})',
+            xaxis_title='',
+            yaxis_title='',
+            coloraxis_showscale=False,
+            margin=dict(t=60, b=20)
         )
         st.plotly_chart(fig2b, use_container_width=True)
+        
 # --- TABLEAU ---
 st.subheader(f"Détail des positions ({devise_affichage})")
 display = bilan_clean[['Ticker', 'Nom', 'quantite_actuelle', col_prix_revient,
