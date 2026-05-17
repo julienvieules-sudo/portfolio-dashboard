@@ -1,4 +1,4 @@
-"ticker,nom,prix_achat,quantite"
-"PE500.PA,Amundi PEA S&P 500,26.89,81.00"
-"PCEU.PA,Amundi PEA MSCI Europe,21.91,17.00"
-"PANX.PA,Amundi PEA US Tech,32.95,133.00"
+ticker,nom,prix_achat,quantite
+PE500.PA,Amundi PEA S&P 500,26.89,81.00
+PCEU.PA,Amundi PEA MSCI Europe,21.91,17.00
+PANX.PA,Amundi PEA US Tech,32.95,133.00
