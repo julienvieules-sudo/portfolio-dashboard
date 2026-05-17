@@ -90,10 +90,11 @@ rendement_global = (pv_totale / investie_totale) * 100
 # --- METRICS GLOBALES ---
 st.subheader("Vue consolidée")
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 col1.metric("Patrimoine total", f"€ {valeur_totale:,.0f}")
 col2.metric("Total investi", f"€ {investie_totale:,.0f}")
-col3.metric("Plus-values totales", f"€ {pv_totale:,.0f}", f"{rendement_global:.1f}%")
+col3.metric("Plus-values totales", f"€ {pv_totale:,.0f}")
+col4.metric("Rendement global", f"{rendement_global:.1f}%", f"€ {pv_totale:+,.0f}")
 
 st.divider()
 
