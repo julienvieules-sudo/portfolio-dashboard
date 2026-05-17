@@ -5,6 +5,7 @@ import glob
 import plotly.express as px
 from datetime import datetime
 
+st.sidebar.title("💼 Patrimoine global")
 st.set_page_config(page_title="Mon Patrimoine", layout="wide")
 st.title("💼 Mon Patrimoine")
 
