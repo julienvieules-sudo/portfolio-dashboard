@@ -292,45 +292,35 @@ with col_b:
         )
         st.plotly_chart(fig2b, use_container_width=True)
         
-# --- TABLEAU ---
-st.subheader(f"Détail des positions ({devise_affichage})")
-display = bilan_clean[['Ticker', 'Nom', 'quantite_actuelle', col_prix_revient,
-                        col_prix_actuel, col_gain, col_rendement]].copy()
+# Tableau sans la ligne total
+display_sans_total = display[display['Ticker'] != 'TOTAL'].copy()
 
-display['Valeur investie'] = display['quantite_actuelle'] * display[col_prix_revient]
-display['Valeur actuelle'] = display['quantite_actuelle'] * display[col_prix_actuel]
+st.dataframe(
+    display_sans_total,
+    column_config={
+        f'Gain ({symbole})': st.column_config.NumberColumn(
+            f'Gain ({symbole})', format='%+.1f'),
+        f'Valeur ({symbole})': st.column_config.NumberColumn(
+            f'Valeur ({symbole})', format='%.1f'),
+        f'Investi ({symbole})': st.column_config.NumberColumn(
+            f'Investi ({symbole})', format='%.1f'),
+        'Rendement %': st.column_config.NumberColumn(
+            'Rendement %', format='%+.1f%%'),
+    },
+    use_container_width=True,
+    hide_index=True
+)
 
-display = display[['Ticker', 'Nom', 'quantite_actuelle', col_prix_revient, 'Valeur investie',
-                    col_prix_actuel, 'Valeur actuelle', col_gain, col_rendement]]
-
-display.columns = ['Ticker', 'Société', 'Quantité', 'Prix achat', f'Investi ({symbole})',
-                   'Prix actuel', f'Valeur ({symbole})', f'Gain ({symbole})', 'Rendement %']
-display = display.sort_values(f'Gain ({symbole})', ascending=False)
-
-# Ligne total
-total_row = pd.DataFrame([{
-    'Ticker': 'TOTAL',
-    'Société': '',
-    'Quantité': '',
-    'Prix achat': '',
-    f'Investi ({symbole})': display[f'Investi ({symbole})'].sum(),
-    'Prix actuel': '',
-    f'Valeur ({symbole})': display[f'Valeur ({symbole})'].sum(),
-    f'Gain ({symbole})': display[f'Gain ({symbole})'].sum(),
-    'Rendement %': '',
-}])
-
-display = pd.concat([display, total_row], ignore_index=True)
+# Ligne total séparée
+st.markdown(f"""
+| | | | | **Investi ({symbole})** | | **Valeur ({symbole})** | **Gain ({symbole})** | |
+|---|---|---|---|---|---|---|---|---|
+| **TOTAL** | | | | **{display[display['Ticker']=='TOTAL'][f'Investi ({symbole})'].values[0]:,.1f}** | | **{display[display['Ticker']=='TOTAL'][f'Valeur ({symbole})'].values[0]:,.1f}** | **{display[display['Ticker']=='TOTAL'][f'Gain ({symbole})'].values[0]:+,.1f}** | |
+""")
 
 st.dataframe(
     display,
     column_config={
-        'Rendement %': st.column_config.ProgressColumn(
-            'Rendement %',
-            format='%+.1f%%',
-            min_value=display['Rendement %'].replace('', None).dropna().astype(float).min(),
-            max_value=display['Rendement %'].replace('', None).dropna().astype(float).max(),
-        ),
         f'Gain ({symbole})': st.column_config.NumberColumn(
             f'Gain ({symbole})',
             format='%+.1f',
@@ -342,6 +332,10 @@ st.dataframe(
         f'Investi ({symbole})': st.column_config.NumberColumn(
             f'Investi ({symbole})',
             format='%.1f',
+        ),
+        'Rendement %': st.column_config.NumberColumn(
+            'Rendement %',
+            format='%+.1f%%',
         ),
     },
     use_container_width=True,
