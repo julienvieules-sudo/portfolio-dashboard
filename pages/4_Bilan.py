@@ -161,7 +161,7 @@ with col1:
     st.metric("Cash", f"€ {cash:,.0f}")
 
 with col2:
-    st.markdown("**Réels**")
+    st.markdown("**Immobilier**")
     pct_paye = (terrain_paye_total / terrain_prix_total) * 100
     st.metric("Terrain Yucatán (ta part)", f"€ {terrain_ma_part:,.0f}")
     st.progress(int(pct_paye), text=f"Payé : {terrain_paye_total:,.0f}€ / {terrain_prix_total:,.0f}€ ({pct_paye:.0f}%)")
