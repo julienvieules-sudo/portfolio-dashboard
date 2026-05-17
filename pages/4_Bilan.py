@@ -70,7 +70,7 @@ def calc_crd_conso():
     capital_initial = 20000.0
     taux_mensuel = 2.20 / 100 / 12
     mensualite = 435.0
-    date_debut = date(2024, 11, 1)
+    date_debut = date(2024, 12, 1)
     aujourd_hui = date.today()
     
     nb_mois = (aujourd_hui.year - date_debut.year) * 12 + (aujourd_hui.month - date_debut.month)
