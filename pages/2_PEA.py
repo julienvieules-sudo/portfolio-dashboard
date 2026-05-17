@@ -8,7 +8,6 @@ st.title("🌱 PEA — Plan d'Épargne en Actions")
 
 # --- CHARGEMENT ---
 @st.cache_data(ttl=3600)
-@st.cache_data(ttl=3600)
 def load_pea():
     data = {
         'ticker': ['PE500.PA', 'PCEU.PA', 'PANX.PA'],
