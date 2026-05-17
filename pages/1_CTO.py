@@ -322,15 +322,31 @@ total_row = pd.DataFrame([{
 
 display = pd.concat([display, total_row], ignore_index=True)
 
-st.dataframe(display.style.format({
-    'Quantité': lambda x: f'{x:.1f}' if isinstance(x, float) else x,
-    'Prix achat': lambda x: f'{x:.1f}' if isinstance(x, float) else x,
-    f'Investi ({symbole})': lambda x: f'{x:.1f}' if isinstance(x, float) else x,
-    'Prix actuel': lambda x: f'{x:.1f}' if isinstance(x, float) else x,
-    f'Valeur ({symbole})': lambda x: f'{x:.1f}' if isinstance(x, float) else x,
-    f'Gain ({symbole})': lambda x: f'{x:+.1f}' if isinstance(x, float) else x,
-    'Rendement %': lambda x: f'{x:+.1f}%' if isinstance(x, float) else x,
-}), use_container_width=True)
+st.dataframe(
+    display,
+    column_config={
+        'Rendement %': st.column_config.ProgressColumn(
+            'Rendement %',
+            format='%+.1f%%',
+            min_value=display['Rendement %'].replace('', None).dropna().astype(float).min(),
+            max_value=display['Rendement %'].replace('', None).dropna().astype(float).max(),
+        ),
+        f'Gain ({symbole})': st.column_config.NumberColumn(
+            f'Gain ({symbole})',
+            format='%+.1f',
+        ),
+        f'Valeur ({symbole})': st.column_config.NumberColumn(
+            f'Valeur ({symbole})',
+            format='%.1f',
+        ),
+        f'Investi ({symbole})': st.column_config.NumberColumn(
+            f'Investi ({symbole})',
+            format='%.1f',
+        ),
+    },
+    use_container_width=True,
+    hide_index=True
+)
 
 # --- BILAN REVENUS ---
 st.subheader("Bilan revenus & frais (€)")
