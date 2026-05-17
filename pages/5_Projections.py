@@ -185,26 +185,25 @@ df_central = simuler(rendement_central, **kwargs_base)
 df_pessimiste = simuler(rendement_pessimiste, **kwargs_base)
 df_optimiste = simuler(rendement_optimiste, **kwargs_base)
 
-# --- GRAPHIQUE PATRIMOINE NET ---
-st.subheader("Évolution du patrimoine net")
+# --- GRAPHIQUE PATRIMOINE BRUT ---
+st.subheader("Évolution du patrimoine financier brut")
 
 fig1 = go.Figure()
 
 fig1.add_trace(go.Scatter(
-    x=df_optimiste['Date'], y=df_optimiste['Patrimoine net'],
+    x=df_optimiste['Date'], y=df_optimiste['Patrimoine financier'],
     name=f'Optimiste ({rendement_optimiste:.1f}%)',
     line=dict(color='#1D9E75', width=1, dash='dot'),
-    fill=None
 ))
 fig1.add_trace(go.Scatter(
-    x=df_pessimiste['Date'], y=df_pessimiste['Patrimoine net'],
+    x=df_pessimiste['Date'], y=df_pessimiste['Patrimoine financier'],
     name=f'Pessimiste ({rendement_pessimiste:.1f}%)',
     line=dict(color='#E24B4A', width=1, dash='dot'),
     fill='tonexty',
     fillcolor='rgba(200, 200, 200, 0.2)'
 ))
 fig1.add_trace(go.Scatter(
-    x=df_central['Date'], y=df_central['Patrimoine net'],
+    x=df_central['Date'], y=df_central['Patrimoine financier'],
     name=f'Central ({rendement_central:.1f}%)',
     line=dict(color='#378ADD', width=2),
 ))
@@ -261,9 +260,9 @@ cols = st.columns(len(jalons))
 for i, ans in enumerate(jalons):
     if ans <= horizon:
         idx = min(ans * 12 - 1, len(df_central) - 1)
-        val = df_central['Patrimoine net'].iloc[idx]
-        val_opt = df_optimiste['Patrimoine net'].iloc[idx]
-        val_pess = df_pessimiste['Patrimoine net'].iloc[idx]
+        val = df_central['Patrimoine financier'].iloc[idx]
+        val_opt = df_optimiste['Patrimoine financier'].iloc[idx]
+        val_pess = df_pessimiste['Patrimoine financier'].iloc[idx]
         cols[i].metric(
             f"Dans {ans} an{'s' if ans > 1 else ''}",
             f"€ {val:,.0f}",
