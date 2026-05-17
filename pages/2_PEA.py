@@ -8,8 +8,15 @@ st.title("🌱 PEA — Plan d'Épargne en Actions")
 
 # --- CHARGEMENT ---
 @st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600)
 def load_pea():
-    return pd.read_csv("pea.csv", sep=",")
+    data = {
+        'ticker': ['PE500.PA', 'PCEU.PA', 'PANX.PA'],
+        'nom': ['Amundi PEA S&P 500', 'Amundi PEA MSCI Europe', 'Amundi PEA US Tech'],
+        'prix_achat': [26.89, 21.91, 32.95],
+        'quantite': [81.0, 17.0, 133.0]
+    }
+    return pd.DataFrame(data)
 
 @st.cache_data(ttl=3600)
 def get_cours_pea(tickers):
