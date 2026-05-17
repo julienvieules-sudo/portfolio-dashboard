@@ -142,9 +142,10 @@ def simuler(rendement_annuel, apport_mensuel, pee_annuel,
             crd = max(0, crd - amort)
             
             # Nouveau crédit quand le premier est fini
-            if crd == 0 and nouveau_credit and not nouveau_actif:
-                nouveau_crd = montant_nouveau
-                nouveau_actif = True
+        if crd == 0 and nouveau_credit and not nouveau_actif:
+            nouveau_crd = montant_nouveau
+            nouveau_actif = True
+            patrimoine += montant_nouveau  # le cash du crédit arrive sur le compte
         
         # Remboursement nouveau crédit
         if nouveau_actif and nouveau_crd > 0:
