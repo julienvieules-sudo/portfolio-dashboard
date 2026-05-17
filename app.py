@@ -55,17 +55,24 @@ for _, row in df_pea.iterrows():
         pass
 
 # --- CRYPTO ---
-crypto_positions = {
-    'BTC-EUR': 0,
-    'ETH-EUR': 0,
-    'SOL-EUR': 0,
-    'BNB-EUR': 0,
-}
+@st.cache_data(ttl=300)
+def get_valeur_crypto(eur_usd):
+    positions = {
+        'BTC-USD': 0.04391,
+        'ETH-USD': 1.0306,
+        'SOL-USD': 3.48,
+        'BNB-USD': 6.6556
+    }
+    total = 0
+    for ticker, quantite in positions.items():
+        try:
+            prix = yf.Ticker(ticker).history(period="1d")['Close'].iloc[-1]
+            total += (prix * quantite) / eur_usd
+        except:
+            pass
+    return total
 
-# Pour l'instant à 0 — on mettra à jour quand la page Crypto sera prête
-
-valeur_crypto = sum(crypto_positions.values())
-valeur_totale = valeur_cto + valeur_pea + valeur_crypto
+valeur_crypto = get_valeur_crypto(eur_usd)
 
 # --- METRICS ---
 st.subheader("Vue consolidée du patrimoine financier")
@@ -84,6 +91,7 @@ import plotly.express as px
 data_rep = pd.DataFrame([
     {'Poche': 'CTO', 'Valeur': valeur_cto},
     {'Poche': 'PEA', 'Valeur': valeur_pea},
+    {'Poche': 'Crypto', 'Valeur': valeur_crypto},
 ])
 
 fig = px.pie(
