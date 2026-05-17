@@ -201,7 +201,7 @@ with col1:
     st.metric("Mensualité", "435 €")
     
     # Barre de progression crédit conso
-    capital_initial_conso = 15675  # approximatif
+    capital_initial_conso = 20000 # approximatif
     pct_rembourse_conso = (1 - crd_conso / capital_initial_conso) * 100
     st.progress(int(min(100, pct_rembourse_conso)), 
                 text=f"Remboursé : {capital_initial_conso - crd_conso:,.0f}€ / {capital_initial_conso:,.0f}€ ({pct_rembourse_conso:.0f}%)")
