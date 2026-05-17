@@ -119,7 +119,7 @@ cash = st.number_input(
     "Cash disponible (€)",
     min_value=0,
     max_value=500000,
-    value=33000,  # 3K cash + 30K PEE à venir
+    value=5000,
     step=500,
     help="Incluez le cash sur vos comptes bancaires"
 )
