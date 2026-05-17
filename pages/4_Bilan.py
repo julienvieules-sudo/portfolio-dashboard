@@ -67,17 +67,20 @@ def get_valeur_crypto(eur_usd):
 
 # --- CREDIT CONSO ---
 def calc_crd_conso():
-    capital_initial = 13115 + (435 * 6)  # on remonte au capital initial approximatif
-    date_debut = date(2024, 11, 1)
+    capital_initial = 20000.0
     taux_mensuel = 2.20 / 100 / 12
+    mensualite = 435.0
+    date_debut = date(2024, 11, 1)
     aujourd_hui = date.today()
+    
     nb_mois = (aujourd_hui.year - date_debut.year) * 12 + (aujourd_hui.month - date_debut.month)
     
-    crd = 13115.0
-    for _ in range(max(0, nb_mois - 6)):  # on est à ~6 mois depuis le début
+    crd = capital_initial
+    for _ in range(nb_mois):
         interet = crd * taux_mensuel
-        amortissement = 435 - interet
+        amortissement = mensualite - interet
         crd -= amortissement
+    
     return max(0, crd)
 
 # --- TERRAIN ---
