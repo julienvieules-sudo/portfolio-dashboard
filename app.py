@@ -95,4 +95,37 @@ col1.metric("Patrimoine total", f"€ {valeur_totale:,.0f}")
 col2.metric("Total investi", f"€ {investie_totale:,.0f}")
 col3.metric("Plus-values totales", f"€ {pv_totale:,.0f}", f"{rendement_global:.1f}%")
 
-st.di
+st.divider()
+
+# --- DETAIL PAR POCHE ---
+col1, col2, col3 = st.columns(3)
+col1.metric("CTO", f"€ {valeur_cto:,.0f}", f"€ {pv_cto:+,.0f}")
+col2.metric("PEA", f"€ {valeur_pea:,.0f}", f"€ {pv_pea:+,.0f}")
+col3.metric("Crypto", f"€ {valeur_crypto:,.0f}", f"€ {pv_crypto:+,.0f}")
+
+st.divider()
+
+# --- REPARTITION ---
+data_rep = pd.DataFrame([
+    {'Poche': 'CTO', 'Valeur': valeur_cto},
+    {'Poche': 'PEA', 'Valeur': valeur_pea},
+    {'Poche': 'Crypto', 'Valeur': valeur_crypto},
+])
+
+fig = px.pie(
+    data_rep,
+    values='Valeur',
+    names='Poche',
+    title='Répartition du patrimoine financier',
+    hole=0.45,
+    color_discrete_sequence=['#378ADD', '#1D9E75', '#F7931A']
+)
+fig.update_traces(
+    textposition='outside',
+    textinfo='label+percent+value',
+    pull=[0.03] * 3
+)
+fig.update_layout(showlegend=False, margin=dict(t=60, b=60, l=60, r=60))
+st.plotly_chart(fig, use_container_width=True)
+
+st.caption("Navigation : utilisez le menu à gauche pour accéder au détail de chaque poche.")
