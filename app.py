@@ -484,6 +484,116 @@ fig_div.update_layout(
 )
 st.plotly_chart(fig_div, use_container_width=True)
 
+# --- CROISSANCE DU PORTEFEUILLE ---
+st.divider()
+st.subheader("Croissance du portefeuille dans le temps")
+
+@st.cache_data(ttl=3600)
+def calc_croissance(df_transactions, df_ptf, eur_usd_hist):
+    ticker_mapping = {'ASML': 'ASML.AS'}
+    devise_map = df_ptf.set_index('ticker')['devise'].to_dict()
+    tickers_yf = [ticker_mapping.get(t, t) for t in df_ptf['ticker'].tolist()]
+
+    historique = yf.download(tickers_yf, start="2023-07-31",
+                              end=datetime.today().strftime('%Y-%m-%d'))['Close']
+
+    achats_ventes_all = df_transactions[df_transactions['Action'].isin([
+        'Market buy', 'Limit buy', 'Market sell', 'Limit sell'
+    ])].copy()
+    achats_ventes_all['Time'] = pd.to_datetime(achats_ventes_all['Time']).dt.date
+    achats_ventes_all['No. of shares'] = pd.to_numeric(achats_ventes_all['No. of shares'], errors='coerce')
+    achats_ventes_all.loc[achats_ventes_all['Action'].isin(['Market sell', 'Limit sell']), 'No. of shares'] *= -1
+
+    mouvements = achats_ventes_all.groupby(['Time', 'Ticker'])['No. of shares'].sum().unstack(fill_value=0)
+    quantites = mouvements.cumsum()
+    quantites.index = pd.to_datetime(quantites.index)
+    quantites = quantites.reindex(historique.index, method='ffill').fillna(0)
+
+    # Correction split BKNG
+    if 'BKNG' in quantites.columns:
+        date_split_bkng = pd.Timestamp('2026-04-06')
+        quantites.loc[quantites.index >= date_split_bkng, 'BKNG'] *= 25
+
+    eur_usd_aligned = eur_usd_hist.reindex(historique.index, method='ffill')
+
+    valeur_ptf_eur = pd.Series(0.0, index=historique.index)
+
+    for ticker_ptf in df_ptf['ticker'].tolist():
+        ticker_yf = ticker_mapping.get(ticker_ptf, ticker_ptf)
+        ticker_trans = ticker_ptf.split('.')[0] if ticker_ptf not in quantites.columns else ticker_ptf
+
+        if ticker_yf not in historique.columns or ticker_trans not in quantites.columns:
+            continue
+
+        valeur_ticker = quantites[ticker_trans] * historique[ticker_yf]
+        devise = devise_map.get(ticker_ptf, 'USD')
+
+        if devise == 'USD':
+            valeur_ticker = valeur_ticker / eur_usd_aligned
+
+        valeur_ptf_eur += valeur_ticker
+
+    return valeur_ptf_eur
+
+with st.spinner("Calcul de la croissance..."):
+    valeur_ptf_eur = calc_croissance(df_transactions, df_ptf, eur_usd_hist)
+
+# --- Jalons ---
+jalons = {
+    '31/12/2023': pd.Timestamp('2023-12-29'),
+    '31/12/2024': pd.Timestamp('2024-12-30'),
+    '31/12/2025': pd.Timestamp('2025-12-30'),
+    "Aujourd'hui": valeur_ptf_eur.index[-1]
+}
+
+fig_croissance = go.Figure()
+
+fig_croissance.add_trace(go.Scatter(
+    x=valeur_ptf_eur.index,
+    y=valeur_ptf_eur.values,
+    name='Valeur du portefeuille',
+    line=dict(color='#378ADD', width=2),
+    fill='tozeroy',
+    fillcolor='rgba(55, 138, 221, 0.1)'
+))
+
+for label, date in jalons.items():
+    dates_dispo = valeur_ptf_eur[valeur_ptf_eur.index <= date]
+    if dates_dispo.empty:
+        continue
+    valeur = dates_dispo.iloc[-1]
+    date_reelle = dates_dispo.index[-1]
+
+    fig_croissance.add_vline(
+        x=date_reelle,
+        line_dash='dot',
+        line_color='gray',
+        line_width=1
+    )
+    fig_croissance.add_annotation(
+        x=date_reelle,
+        y=valeur,
+        text=f"{label}<br><b>{valeur:,.0f} €</b>",
+        showarrow=True,
+        arrowhead=2,
+        arrowcolor='gray',
+        bgcolor='white',
+        bordercolor='gray',
+        borderwidth=1,
+        font=dict(size=11)
+    )
+
+fig_croissance.update_layout(
+    title='Croissance du portefeuille dans le temps (€)',
+    xaxis_title='',
+    yaxis_title='Valeur (€)',
+    hovermode='x unified',
+    margin=dict(t=60, b=20),
+    showlegend=False
+)
+st.plotly_chart(fig_croissance, use_container_width=True)
+st.caption("Note : valeur des positions uniquement, hors liquidités disponibles. Cours de clôture J-1.")
+
 # --- IMPACT CHANGE ---
 if devise_affichage == "EUR":
     st.divider()
