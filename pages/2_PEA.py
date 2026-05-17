@@ -127,7 +127,7 @@ def get_historique_pea(tickers, date_debut):
     return yf.download(tickers, start=date_debut,
                        end=datetime.today().strftime('%Y-%m-%d'))['Close']
 
-date_debut_pea = "2021-01-01"
+date_debut_pea = "2022-01-01"
 historique_pea = get_historique_pea(df_pea['ticker'].tolist(), date_debut_pea)
 
 fig3 = go.Figure()
