@@ -127,7 +127,7 @@ cash = st.number_input(
 st.divider()
 
 # --- CALCULS ---
-pee = 30000
+pee = 29582
 percol = 5782
 
 actifs_financiers = valeur_cto + valeur_pea + valeur_crypto + pee + percol + cash
