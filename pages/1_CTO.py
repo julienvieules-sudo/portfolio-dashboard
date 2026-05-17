@@ -307,46 +307,30 @@ display.columns = ['Ticker', 'Société', 'Quantité', 'Prix achat', f'Investi (
                    'Prix actuel', f'Valeur ({symbole})', f'Gain ({symbole})', 'Rendement %']
 display = display.sort_values(f'Gain ({symbole})', ascending=False)
 
-# Ligne total
-total_row = pd.DataFrame([{
-    'Ticker': 'TOTAL',
-    'Société': '',
-    'Quantité': '',
-    'Prix achat': '',
-    f'Investi ({symbole})': display[f'Investi ({symbole})'].sum(),
-    'Prix actuel': '',
-    f'Valeur ({symbole})': display[f'Valeur ({symbole})'].sum(),
-    f'Gain ({symbole})': display[f'Gain ({symbole})'].sum(),
-    'Rendement %': '',
-}])
-
-display = pd.concat([display, total_row], ignore_index=True)
-
+# Tableau triable SANS total
 st.dataframe(
     display,
     column_config={
-        'Rendement %': st.column_config.ProgressColumn(
-            'Rendement %',
-            format='%+.1f%%',
-            min_value=display['Rendement %'].replace('', None).dropna().astype(float).min(),
-            max_value=display['Rendement %'].replace('', None).dropna().astype(float).max(),
-        ),
         f'Gain ({symbole})': st.column_config.NumberColumn(
-            f'Gain ({symbole})',
-            format='%+.1f',
-        ),
+            f'Gain ({symbole})', format='%+.1f'),
         f'Valeur ({symbole})': st.column_config.NumberColumn(
-            f'Valeur ({symbole})',
-            format='%.1f',
-        ),
+            f'Valeur ({symbole})', format='%.1f'),
         f'Investi ({symbole})': st.column_config.NumberColumn(
-            f'Investi ({symbole})',
-            format='%.1f',
-        ),
+            f'Investi ({symbole})', format='%.1f'),
+        'Rendement %': st.column_config.NumberColumn(
+            'Rendement %', format='%+.1f%%'),
     },
     use_container_width=True,
     hide_index=True
 )
+
+# Total fixe en dessous
+st.markdown("---")
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Total investi", f"{display[f'Investi ({symbole})'].sum():,.1f} {symbole}")
+col2.metric("Valeur actuelle", f"{display[f'Valeur ({symbole})'].sum():,.1f} {symbole}")
+col3.metric("Plus-values", f"{display[f'Gain ({symbole})'].sum():+,.1f} {symbole}")
+col4.metric("Rendement", f"{rendement_global:.1f}%")
 
 # --- BILAN REVENUS ---
 st.subheader("Bilan revenus & frais (€)")
