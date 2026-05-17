@@ -93,7 +93,7 @@ with col_a:
         hole=0.45,
         color_discrete_sequence=px.colors.qualitative.Set2
     )
-    fig1.update_traces(
+    fig1.up_traces(
         textposition='outside',
         textinfo='label+percent',
         pull=[0.03] * len(df_pea)
