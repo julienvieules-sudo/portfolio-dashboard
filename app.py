@@ -74,6 +74,8 @@ def get_valeur_crypto(eur_usd):
 
 valeur_crypto = get_valeur_crypto(eur_usd)
 
+valeur_totale = valeur_cto + valeur_pea + valeur_crypto
+
 # --- METRICS ---
 st.subheader("Vue consolidée du patrimoine financier")
 
