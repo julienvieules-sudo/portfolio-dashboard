@@ -88,7 +88,7 @@ with col_a:
     fig1 = px.pie(
         df_pea.dropna(subset=['prix_actuel']),
         values='valeur_actuelle',
-        names='ticker',
+        names='nom',
         title='Répartition du PEA',
         hole=0.45,
         color_discrete_sequence=px.colors.qualitative.Set2
@@ -104,7 +104,7 @@ with col_a:
 with col_b:
     fig2 = px.bar(
         df_pea.dropna(subset=['prix_actuel']).sort_values('rendement', ascending=False),
-        x='ticker', y='rendement',
+        x='nom', y='rendement',
         title='Rendement par ETF (%)',
         color='rendement',
         color_continuous_scale=['red', 'lightgrey', 'green'],
