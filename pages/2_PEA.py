@@ -9,7 +9,7 @@ st.title("🌱 PEA — Plan d'Épargne en Actions")
 # --- CHARGEMENT ---
 @st.cache_data(ttl=3600)
 def load_pea():
-    return pd.read_csv("pea.csv")
+    return pd.read_csv("pea.csv", sep=",")
 
 @st.cache_data(ttl=3600)
 def get_cours_pea(tickers):
