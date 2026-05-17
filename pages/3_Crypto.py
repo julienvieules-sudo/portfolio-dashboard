@@ -138,7 +138,7 @@ def get_historique_crypto(tickers, date_debut):
                        end=datetime.today().strftime('%Y-%m-%d'))['Close']
 
 historique_crypto = get_historique_crypto(
-    df_crypto['ticker'].tolist(), "2021-01-01"
+    df_crypto['ticker'].tolist(), "2023-01-01"
 )
 
 fig3 = go.Figure()
