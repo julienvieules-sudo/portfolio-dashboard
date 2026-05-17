@@ -5,7 +5,6 @@ import glob
 import plotly.express as px
 from datetime import datetime
 
-st.sidebar.title("💼 Patrimoine global")
 st.set_page_config(page_title="Mon Patrimoine", layout="wide")
 st.title("💼 Mon Patrimoine")
 
@@ -124,7 +123,7 @@ fig = px.pie(
 )
 fig.update_traces(
     textposition='outside',
-    textinfo='label+percent+value',
+    texttemplate='%{label}<br>%{percent:.0%}<br>€ %{value:,.0f}',
     pull=[0.03] * 3
 )
 fig.update_layout(showlegend=False, margin=dict(t=60, b=60, l=60, r=60))
