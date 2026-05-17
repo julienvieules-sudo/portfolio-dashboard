@@ -138,7 +138,7 @@ def get_historique_crypto(tickers, date_debut):
                        end=datetime.today().strftime('%Y-%m-%d'))['Close']
 
 historique_crypto = get_historique_crypto(
-    df_crypto['ticker'].tolist(), "2023-01-01"
+    df_crypto['ticker'].tolist(), "2024-01-01"
 )
 
 fig3 = go.Figure()
@@ -156,7 +156,7 @@ for i, (ticker, nom) in enumerate(zip(df_crypto['ticker'], df_crypto['nom'])):
         ))
 
 fig3.update_layout(
-    title='Performance comparative (base 100 depuis jan. 2021)',
+    title='Performance comparative (base 100 depuis jan. 2024)',
     xaxis_title='',
     yaxis_title='Performance (base 100)',
     hovermode='x unified',
