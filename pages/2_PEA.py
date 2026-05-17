@@ -93,12 +93,12 @@ with col_a:
         hole=0.45,
         color_discrete_sequence=px.colors.qualitative.Set2
     )
-    fig1.update_traces(
+    fig1.up_traces(
         textposition='outside',
         textinfo='label+percent',
         pull=[0.03] * len(df_pea)
     )
-    fig1.update_layout(showlegend=False, margin=dict(t=60, b=60, l=60, r=60))
+    fig1.up_layout(showlegend=False, margin=dict(t=60, b=60, l=60, r=60))
     st.plotly_chart(fig1, use_container_width=True)
 
 with col_b:
@@ -111,8 +111,8 @@ with col_b:
         color_continuous_midpoint=0,
         text='rendement'
     )
-    fig2.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
-    fig2.update_layout(
+    fig2.up_traces(texttemplate='%{text:.1f}%', textposition='outside')
+    fig2.up_layout(
         coloraxis_showscale=False,
         xaxis_title='', yaxis_title='',
         margin=dict(t=60, b=20)
@@ -127,7 +127,7 @@ def get_historique_pea(tickers, date_debut):
     return yf.download(tickers, start=date_debut,
                        end=datetime.today().strftime('%Y-%m-%d'))['Close']
 
-date_debut_pea = "2023-01-01"
+date_debut_pea = "2021-01-01"
 historique_pea = get_historique_pea(df_pea['ticker'].tolist(), date_debut_pea)
 
 fig3 = go.Figure()
